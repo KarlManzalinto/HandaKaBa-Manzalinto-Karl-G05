@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}My Profile | Handa Ka Ba{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>My Profile</h1>
+  <div style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap">
+    {% if profile_user.profile.photo %}<img class="avatar" src="{{ profile_user.profile.photo.url }}" alt="Profile photo">
+    {% else %}<div class="avatar"></div>{% endif %}
+    <div>
+      <h2 style="margin-bottom:.2rem">{{ profile_user.get_full_name|default:profile_user.username }}</h2>
+      <span class="badge">{{ profile_user.profile.get_role_display }}</span>
+    </div>
+  </div>
+  <table style="margin-top:1rem">
+    <tr><th>Username</th><td>{{ profile_user.username }}</td></tr>
+    <tr><th>Email</th><td>{{ profile_user.email }}</td></tr>
+    <tr><th>Contact number</th><td>{{ profile_user.profile.contact_number|default:"—" }}</td></tr>
+    <tr><th>Barangay</th><td>{{ profile_user.profile.barangay|default:"—" }}</td></tr>
+    <tr><th>Household size</th><td>{{ profile_user.profile.household_size }}</td></tr>
+    <tr><th>Member since</th><td>{{ profile_user.date_joined|date:"F j, Y" }}</td></tr>
+  </table>
+  <p><a class="btn" href="{% url 'accounts:profile_edit' %}">Edit profile</a></p>
+</div>
+{% endblock %}
