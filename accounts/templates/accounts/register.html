@@ -1,13 +1,25 @@
 {% extends "base.html" %}
 {% block title %}Register | Handa Ka Ba{% endblock %}
 {% block content %}
-<div class="card narrow">
-  <h1>Create your account</h1>
-  <p class="muted">Keep your go-bag complete and up to date.</p>
-  <form method="post" novalidate>{% csrf_token %}
-    {% include "_form.html" %}
-    <button class="btn" type="submit">Register</button>
-  </form>
-  <p>Already have an account? <a href="{% url 'accounts:login' %}">Log in</a></p>
+<div class="split">
+  <section class="brand">
+    <div class="logo" style="padding:0"><i>&#127890;</i>Handa Ka Ba</div>
+    <h1>Build a go-bag that stays ready.</h1>
+    <p>Most families pack a kit once and never open it again. Handa Ka Ba keeps yours current all year.</p>
+    <ul>
+      <li><span>&#128241;</span><div><b>Works on your phone</b><small>Open it in any browser</small></div></li>
+      <li><span>&#128106;</span><div><b>Sized to your household</b><small>Checklists scale with the number of people</small></div></li>
+      <li><span>&#9889;</span><div><b>Free and low effort</b><small>Two minutes to set up</small></div></li>
+    </ul>
+    <div class="stat-big"><b>72h</b><span>of supplies is what NDRRMC and the Red Cross recommend</span></div>
+  </section>
+  <section class="formside"><div class="formbox">
+    <h2>Create your account</h2><p class="muted">Takes about a minute.</p>
+    <form method="post" novalidate class="fg mt">{% csrf_token %}
+      {% include "_form.html" with grid=True full_fields="username,email" %}
+      <button class="btn full" type="submit" style="grid-column:1/-1">Create account</button>
+    </form>
+    <p class="alt-link">Already registered? <a href="{% url 'accounts:login' %}">Log in</a></p>
+  </div></section>
 </div>
 {% endblock %}

@@ -1,13 +1,26 @@
 {% extends "base.html" %}
 {% block title %}Log in | Handa Ka Ba{% endblock %}
 {% block content %}
-<div class="card narrow">
-  <h1>Log in</h1>
-  <form method="post" novalidate>{% csrf_token %}
-    <input type="hidden" name="next" value="{{ next }}">
-    {% include "_form.html" %}
-    <button class="btn" type="submit">Log in</button>
-  </form>
-  <p>No account yet? <a href="{% url 'accounts:register' %}">Register</a></p>
+<div class="split">
+  <section class="brand">
+    <div class="logo" style="padding:0"><i>&#127890;</i>Handa Ka Ba</div>
+    <h1>Is your go-bag ready for the next typhoon?</h1>
+    <p>Log what's in your emergency kit and get reminded before food, medicine and batteries expire or run low.</p>
+    <ul>
+      <li><span>&#128230;</span><div><b>Track every item</b><small>Water, food, medicine, batteries and more</small></div></li>
+      <li><span>&#128276;</span><div><b>Get restock reminders</b><small>Before things expire, not after</small></div></li>
+      <li><span>&#128200;</span><div><b>See your readiness</b><small>One score for your 72-hour kit</small></div></li>
+    </ul>
+    <div class="stat-big"><b>~20</b><span>typhoons hit the Philippines every year</span></div>
+  </section>
+  <section class="formside"><div class="formbox">
+    <h2>Welcome back</h2><p class="muted">Log in to check your kit.</p>
+    <form method="post" novalidate class="fg mt">{% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      {% include "_form.html" %}
+      <button class="btn full" type="submit" style="grid-column:1/-1">Log in</button>
+    </form>
+    <p class="alt-link">New here? <a href="{% url 'accounts:register' %}">Create an account</a></p>
+  </div></section>
 </div>
 {% endblock %}
