@@ -1,13 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Edit Profile | Handa Ka Ba{% endblock %}
+{% block title %}Edit profile | Handa Ka Ba{% endblock %}
 {% block content %}
-<div class="card narrow">
-  <h1>Edit profile</h1>
-  <form method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}
-    {% include "_form.html" with form=user_form %}
-    {% include "_form.html" with form=profile_form %}
-    <button class="btn" type="submit">Save changes</button>
-    <a class="btn alt" href="{% url 'accounts:profile' %}">Cancel</a>
-  </form>
+<form method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}
+<div class="grid g2e">
+  <div class="card"><h2>&#128100; Account</h2><div class="fg">{% include "_form.html" with form=user_form grid=True full_fields="email" %}</div></div>
+  <div class="card"><h2>&#127968; Household</h2><div class="fg">{% include "_form.html" with form=profile_form grid=True full_fields="photo" %}</div></div>
 </div>
+<p class="mt"><button class="btn" type="submit">Save changes</button> <a class="btn alt" href="{% url 'accounts:profile' %}">Cancel</a></p>
+</form>
 {% endblock %}

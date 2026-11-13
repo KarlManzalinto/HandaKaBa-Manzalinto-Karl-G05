@@ -1,24 +1,25 @@
 {% extends "base.html" %}
-{% block title %}My Profile | Handa Ka Ba{% endblock %}
+{% block title %}My profile | Handa Ka Ba{% endblock %}
 {% block content %}
-<div class="card">
-  <h1>My Profile</h1>
-  <div style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap">
-    {% if profile_user.profile.photo %}<img class="avatar" src="{{ profile_user.profile.photo.url }}" alt="Profile photo">
-    {% else %}<div class="avatar"></div>{% endif %}
-    <div>
-      <h2 style="margin-bottom:.2rem">{{ profile_user.get_full_name|default:profile_user.username }}</h2>
-      <span class="badge">{{ profile_user.profile.get_role_display }}</span>
-    </div>
+<div class="grid" style="grid-template-columns:320px 1fr;align-items:start">
+  <div class="card pf"><div class="ban"></div>
+    {% if profile_user.profile.photo %}<img class="big" src="{{ profile_user.profile.photo.url }}" alt="Profile photo">{% else %}<div class="big">{{ profile_user.username|slice:":1"|upper }}</div>{% endif %}
+    <div class="in"><h2 style="font-size:1.4rem">{{ profile_user.get_full_name|default:profile_user.username }}</h2>
+      <p class="muted" style="margin:.2rem 0 .6rem">@{{ profile_user.username }}</p>
+      <span class="badge {% if profile_user.profile.role == 'admin' %}a{% endif %}">{{ profile_user.profile.get_role_display }}</span>
+      <div style="text-align:left;margin:1.2rem 0 .4rem"><b>Profile {{ completeness }}% complete</b></div>
+      <div class="bar"><i style="width:{{ completeness }}%"></i></div>
+      <p style="margin-top:1.2rem"><a class="btn full" href="{% url 'accounts:profile_edit' %}">Edit profile</a></p></div>
   </div>
-  <table style="margin-top:1rem">
-    <tr><th>Username</th><td>{{ profile_user.username }}</td></tr>
-    <tr><th>Email</th><td>{{ profile_user.email }}</td></tr>
-    <tr><th>Contact number</th><td>{{ profile_user.profile.contact_number|default:"—" }}</td></tr>
-    <tr><th>Barangay</th><td>{{ profile_user.profile.barangay|default:"—" }}</td></tr>
-    <tr><th>Household size</th><td>{{ profile_user.profile.household_size }}</td></tr>
-    <tr><th>Member since</th><td>{{ profile_user.date_joined|date:"F j, Y" }}</td></tr>
-  </table>
-  <p><a class="btn" href="{% url 'accounts:profile_edit' %}">Edit profile</a></p>
+  <div class="card"><h2>Details</h2>
+    <dl class="kv">
+      <dt>Full name</dt><dd>{{ profile_user.get_full_name|default:"-" }}</dd>
+      <dt>Username</dt><dd>{{ profile_user.username }}</dd>
+      <dt>Email</dt><dd>{{ profile_user.email|default:"-" }}</dd>
+      <dt>Contact number</dt><dd>{{ profile_user.profile.contact_number|default:"Not added yet" }}</dd>
+      <dt>Barangay</dt><dd>{{ profile_user.profile.barangay|default:"Not added yet" }}</dd>
+      <dt>Household size</dt><dd>{{ profile_user.profile.household_size }} {{ profile_user.profile.household_size|pluralize:"person,people" }}</dd>
+      <dt>Member since</dt><dd>{{ profile_user.date_joined|date:"F j, Y" }}</dd>
+    </dl></div>
 </div>
 {% endblock %}
