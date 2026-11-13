@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}My Go-Bag | Handa Ka Ba{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Hello, {{ user.first_name|default:user.username }}!</h1>
+  <p class="muted">Household of {{ user.profile.household_size }}{% if user.profile.barangay %} · Brgy. {{ user.profile.barangay }}{% endif %}</p>
+</div>
+<div class="grid">
+  <div class="card"><div class="muted">Kit completeness</div><div class="stat">0%</div><div class="muted">Inventory module coming next</div></div>
+  <div class="card"><div class="muted">Upcoming expiries</div><div class="stat">0</div><div class="muted">Reminders module coming next</div></div>
+  <div class="card"><div class="muted">Typhoon advisory</div><div class="stat">&mdash;</div><div class="muted">Advisory link coming later</div></div>
+</div>
+{% endblock %}

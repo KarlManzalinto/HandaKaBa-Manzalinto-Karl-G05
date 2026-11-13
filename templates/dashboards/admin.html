@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard | Handa Ka Ba{% endblock %}
+{% block content %}
+<div class="card"><h1>Admin Dashboard</h1><p class="muted">Overview of registered users.</p></div>
+<div class="grid">
+  <div class="card"><div class="muted">Total users</div><div class="stat">{{ total_users }}</div></div>
+  <div class="card"><div class="muted">Households</div><div class="stat">{{ household_count }}</div></div>
+  <div class="card"><div class="muted">Administrators</div><div class="stat">{{ admin_count }}</div></div>
+</div>
+<div class="card">
+  <h2>Recent registrations</h2>
+  <table>
+    <tr><th>Username</th><th>Name</th><th>Role</th><th>Barangay</th><th>Joined</th></tr>
+    {% for u in recent_users %}
+    <tr><td>{{ u.username }}</td><td>{{ u.get_full_name|default:"—" }}</td><td>{{ u.profile.get_role_display }}</td><td>{{ u.profile.barangay|default:"—" }}</td><td>{{ u.date_joined|date:"M j, Y" }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}
