@@ -1,9 +1,12 @@
+from datetime import timedelta
+
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
+from django.utils import timezone
 
 from .decorators import role_required
 from .forms import ProfileUpdateForm, RegisterForm, UserUpdateForm
@@ -53,16 +56,23 @@ def dashboard(request):
 
 @role_required(Profile.ROLE_HOUSEHOLD)
 def household_dashboard(request):
-    return render(request, "dashboards/household.html")
+    size = request.user.profile.household_size
+    return render(request, "dashboards/household.html", {"water_liters": size * 9, "meals": size * 9})
 
 
 @role_required(Profile.ROLE_ADMIN)
 def admin_dashboard(request):
     users = User.objects.select_related("profile").order_by("-date_joined")
+    total = users.count()
+    households = users.filter(profile__role=Profile.ROLE_HOUSEHOLD).count()
+    admins = users.filter(profile__role=Profile.ROLE_ADMIN).count()
     context = {
-        "total_users": users.count(),
-        "household_count": users.filter(profile__role=Profile.ROLE_HOUSEHOLD).count(),
-        "admin_count": users.filter(profile__role=Profile.ROLE_ADMIN).count(),
+        "total_users": total,
+        "household_count": households,
+        "admin_count": admins,
+        "household_pct": round(households * 100 / total) if total else 0,
+        "admin_pct": round(admins * 100 / total) if total else 0,
+        "new_week": users.filter(date_joined__gte=timezone.now() - timedelta(days=7)).count(),
         "recent_users": users[:10],
     }
     return render(request, "dashboards/admin.html", context)
@@ -70,7 +80,10 @@ def admin_dashboard(request):
 
 @login_required
 def profile_view(request):
-    return render(request, "accounts/profile.html", {"profile_user": request.user})
+    u, p = request.user, request.user.profile
+    filled = [u.first_name, u.last_name, u.email, p.contact_number, p.barangay, p.photo]
+    completeness = round(sum(1 for f in filled if f) * 100 / len(filled))
+    return render(request, "accounts/profile.html", {"profile_user": u, "completeness": completeness})
 
 
 @login_required

@@ -1,13 +1,46 @@
 {% extends "base.html" %}
-{% block title %}My Go-Bag | Handa Ka Ba{% endblock %}
+{% block title %}My go-bag | Handa Ka Ba{% endblock %}
 {% block content %}
-<div class="card">
-  <h1>Hello, {{ user.first_name|default:user.username }}!</h1>
-  <p class="muted">Household of {{ user.profile.household_size }}{% if user.profile.barangay %} · Brgy. {{ user.profile.barangay }}{% endif %}</p>
+<section class="hero">
+  <div class="grow">
+    <h1>Hello, {{ user.first_name|default:user.username }}</h1>
+    <p>Your go-bag isn't set up yet. Add your first items so we can start watching expiry dates for you.</p>
+    <span class="chip">&#128106; Household of {{ user.profile.household_size }}</span>
+    {% if user.profile.barangay %}<span class="chip">&#128205; Brgy. {{ user.profile.barangay }}</span>{% endif %}
+    <div style="margin-top:1rem"><a class="btn" href="{% url 'accounts:profile_edit' %}">Complete your profile</a></div>
+  </div>
+  <div class="ring" style="--p:0"><div>0%<small>ready</small></div></div>
+</section>
+
+<div class="grid g4 mt">
+  <div class="card stat"><div class="ic i1">&#128230;</div><div><b>0</b><span>Items tracked</span></div></div>
+  <div class="card stat"><div class="ic i2">&#9989;</div><div><b>0 of 5</b><span>Categories covered</span></div></div>
+  <div class="card stat"><div class="ic i3">&#9203;</div><div><b>0</b><span>Expiring in 30 days</span></div></div>
+  <div class="card stat"><div class="ic i4">&#128167;</div><div><b>{{ water_liters }} L</b><span>Water for 3 days</span></div></div>
 </div>
-<div class="grid">
-  <div class="card"><div class="muted">Kit completeness</div><div class="stat">0%</div><div class="muted">Inventory module coming next</div></div>
-  <div class="card"><div class="muted">Upcoming expiries</div><div class="stat">0</div><div class="muted">Reminders module coming next</div></div>
-  <div class="card"><div class="muted">Typhoon advisory</div><div class="stat">&mdash;</div><div class="muted">Advisory link coming later</div></div>
+
+<div class="grid g2 mt">
+  <div class="card">
+    <h2>What a 72-hour go-bag needs <small>for {{ user.profile.household_size }} {{ user.profile.household_size|pluralize:"person,people" }}</small></h2>
+    <ul class="list">
+      <li><span class="em">&#128167;</span><div><b>Drinking water</b><span>3 liters per person per day</span></div><span class="tag">{{ water_liters }} L</span></li>
+      <li><span class="em">&#129387;</span><div><b>Ready-to-eat food</b><span>Canned goods, biscuits, instant meals</span></div><span class="tag">{{ meals }} meals</span></li>
+      <li><span class="em">&#128138;</span><div><b>Medicine and first aid</b><span>Maintenance meds, bandages, antiseptic</span></div><span class="tag">1 kit</span></li>
+      <li><span class="em">&#128267;</span><div><b>Flashlight and batteries</b><span>Plus a power bank and a whistle</span></div><span class="tag">1 set</span></li>
+      <li><span class="em">&#128196;</span><div><b>IDs and documents</b><span>In a waterproof pouch, with some cash</span></div><span class="tag">1 pouch</span></li>
+    </ul>
+  </div>
+  <div style="display:grid;gap:1rem;align-content:start">
+    <div class="card">
+      <h2>Get started</h2>
+      <ol class="steps">
+        <li><div><b>Complete your profile</b><br><span class="muted">Add your barangay and household size.</span></div></li>
+        <li><div><b>Log your kit items</b><br><span class="muted">Coming in the Inventory module.</span></div></li>
+        <li><div><b>Turn on reminders</b><br><span class="muted">We'll warn you before things expire.</span></div></li>
+      </ol>
+    </div>
+    <div class="tip"><b>Typhoon season check</b><p style="margin:.3rem 0 0">Review your kit before June, and again before any signal no. 1 warning. Replace anything expiring within a month.</p>
+      <div class="signal"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div></div>
+  </div>
 </div>
 {% endblock %}
