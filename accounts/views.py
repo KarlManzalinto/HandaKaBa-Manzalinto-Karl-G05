@@ -11,6 +11,7 @@ from django.utils import timezone
 from .decorators import role_required
 from .forms import ProfileUpdateForm, RegisterForm, UserUpdateForm
 from .models import Profile
+from inventory.stats import household_summary, overall_summary
 
 
 def home(request):
@@ -57,7 +58,8 @@ def dashboard(request):
 @role_required(Profile.ROLE_HOUSEHOLD)
 def household_dashboard(request):
     size = request.user.profile.household_size
-    return render(request, "dashboards/household.html", {"water_liters": size * 9, "meals": size * 9})
+    context = {"water_liters": size * 9, "meals": size * 9, **household_summary(request.user)}
+    return render(request, "dashboards/household.html", context)
 
 
 @role_required(Profile.ROLE_ADMIN)
@@ -74,6 +76,7 @@ def admin_dashboard(request):
         "admin_pct": round(admins * 100 / total) if total else 0,
         "new_week": users.filter(date_joined__gte=timezone.now() - timedelta(days=7)).count(),
         "recent_users": users[:10],
+        "inventory": overall_summary(),
     }
     return render(request, "dashboards/admin.html", context)
 

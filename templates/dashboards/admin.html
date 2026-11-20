@@ -3,7 +3,7 @@
 {% block content %}
 <section class="hero">
   <div class="grow"><h1>Admin dashboard</h1><p>See who has joined Handa Ka Ba and how households are signing up.</p>
-  <a class="btn" href="{% url 'admin:index' %}">Manage users</a></div>
+  <a class="btn" href="{% url 'admin:index' %}">Manage users</a> <a class="btn alt" href="{% url 'inventory:admin_list' %}">All inventory</a></div>
   <div class="ring" style="--p:{{ household_pct }}"><div>{{ household_pct }}%<small>households</small></div></div>
 </section>
 <div class="grid g4 mt">
@@ -11,6 +11,11 @@
   <div class="card stat"><div class="ic i2">&#127968;</div><div><b>{{ household_count }}</b><span>Households</span></div></div>
   <div class="card stat"><div class="ic i1">&#128737;</div><div><b>{{ admin_count }}</b><span>Administrators</span></div></div>
   <div class="card stat"><div class="ic i3">&#10024;</div><div><b>{{ new_week }}</b><span>Joined this week</span></div></div>
+</div>
+<div class="grid g3 mt">
+  <div class="card stat"><div class="ic i1">&#128230;</div><div><b>{{ inventory.total_items }}</b><span>Items tracked in {{ inventory.households_with_items }} household{{ inventory.households_with_items|pluralize }}</span></div></div>
+  <div class="card stat"><div class="ic i3">&#9203;</div><div><b>{{ inventory.expiring_soon }}</b><span>Expiring in 30 days</span></div></div>
+  <div class="card stat"><div class="ic i4">&#9888;</div><div><b>{{ inventory.expired }}</b><span>Expired items</span></div></div>
 </div>
 <div class="grid g2 mt">
   <div class="card"><h2>Recent registrations <small>latest 10</small></h2>

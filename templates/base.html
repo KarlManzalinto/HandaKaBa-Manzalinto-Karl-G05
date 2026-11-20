@@ -12,10 +12,11 @@
   <div class="grp">Menu</div>
   {% if user.profile.role == 'admin' %}
     <a class="nav {% if url == 'admin_dashboard' %}active{% endif %}" href="{% url 'accounts:admin_dashboard' %}">&#128202; Dashboard</a>
+    <a class="nav {% if request.resolver_match.namespace == 'inventory' %}active{% endif %}" href="{% url 'inventory:admin_list' %}">&#128230; All inventory</a>
     <a class="nav" href="{% url 'admin:index' %}">&#128101; Manage users</a>
   {% else %}
     <a class="nav {% if url == 'household_dashboard' %}active{% endif %}" href="{% url 'accounts:household_dashboard' %}">&#127968; My go-bag</a>
-    <span class="nav">&#128230; Inventory <small>Soon</small></span>
+    <a class="nav {% if request.resolver_match.namespace == 'inventory' %}active{% endif %}" href="{% url 'inventory:list' %}">&#128230; My inventory</a>
     <span class="nav">&#128276; Reminders <small>Soon</small></span>
     <span class="nav">&#9989; Checklists <small>Soon</small></span>
   {% endif %}

@@ -4,18 +4,22 @@
 <section class="hero">
   <div class="grow">
     <h1>Hello, {{ user.first_name|default:user.username }}</h1>
+    {% if total_items %}
+    <p>Your go-bag has {{ total_items }} item{{ total_items|pluralize }} across {{ categories_covered }} of {{ categories_total }} categories.{% if expired %} {{ expired }} item{{ expired|pluralize }} expired and {{ expired|pluralize:'needs,need' }} replacing.{% elif expiring_soon %} {{ expiring_soon }} item{{ expiring_soon|pluralize }} expire within 30 days.{% endif %}</p>
+    {% else %}
     <p>Your go-bag isn't set up yet. Add your first items so we can start watching expiry dates for you.</p>
+    {% endif %}
     <span class="chip">&#128106; Household of {{ user.profile.household_size }}</span>
     {% if user.profile.barangay %}<span class="chip">&#128205; Brgy. {{ user.profile.barangay }}</span>{% endif %}
-    <div style="margin-top:1rem"><a class="btn" href="{% url 'accounts:profile_edit' %}">Complete your profile</a></div>
+    <div style="margin-top:1rem"><a class="btn" href="{% url 'inventory:add' %}">+ Add an item</a> {% if total_items %}<a class="btn alt" href="{% url 'inventory:list' %}">View inventory</a>{% endif %}</div>
   </div>
-  <div class="ring" style="--p:0"><div>0%<small>ready</small></div></div>
+  <div class="ring" style="--p:{{ readiness_pct }}"><div>{{ readiness_pct }}%<small>ready</small></div></div>
 </section>
 
 <div class="grid g4 mt">
-  <div class="card stat"><div class="ic i1">&#128230;</div><div><b>0</b><span>Items tracked</span></div></div>
-  <div class="card stat"><div class="ic i2">&#9989;</div><div><b>0 of 5</b><span>Categories covered</span></div></div>
-  <div class="card stat"><div class="ic i3">&#9203;</div><div><b>0</b><span>Expiring in 30 days</span></div></div>
+  <div class="card stat"><div class="ic i1">&#128230;</div><div><b>{{ total_items }}</b><span>Items tracked</span></div></div>
+  <div class="card stat"><div class="ic i2">&#9989;</div><div><b>{{ categories_covered }} of {{ categories_total }}</b><span>Categories covered</span></div></div>
+  <div class="card stat"><div class="ic i3">&#9203;</div><div><b>{{ expiring_soon }}</b><span>Expiring in 30 days</span></div></div>
   <div class="card stat"><div class="ic i4">&#128167;</div><div><b>{{ water_liters }} L</b><span>Water for 3 days</span></div></div>
 </div>
 
@@ -23,20 +27,32 @@
   <div class="card">
     <h2>What a 72-hour go-bag needs <small>for {{ user.profile.household_size }} {{ user.profile.household_size|pluralize:"person,people" }}</small></h2>
     <ul class="list">
-      <li><span class="em">&#128167;</span><div><b>Drinking water</b><span>3 liters per person per day</span></div><span class="tag">{{ water_liters }} L</span></li>
-      <li><span class="em">&#129387;</span><div><b>Ready-to-eat food</b><span>Canned goods, biscuits, instant meals</span></div><span class="tag">{{ meals }} meals</span></li>
-      <li><span class="em">&#128138;</span><div><b>Medicine and first aid</b><span>Maintenance meds, bandages, antiseptic</span></div><span class="tag">1 kit</span></li>
-      <li><span class="em">&#128267;</span><div><b>Flashlight and batteries</b><span>Plus a power bank and a whistle</span></div><span class="tag">1 set</span></li>
-      <li><span class="em">&#128196;</span><div><b>IDs and documents</b><span>In a waterproof pouch, with some cash</span></div><span class="tag">1 pouch</span></li>
+      {% for c in checklist %}
+      <li>
+        <span class="em">{{ c.icon }}</span>
+        <div><b>{{ c.name }}</b><span>{{ c.description }}</span></div>
+        {% if c.count %}<span class="tag ok">&#10003; {{ c.count }} logged</span>{% else %}<a class="tag" href="{% url 'inventory:add' %}?category={{ c.pk }}">+ Add ({{ c.target }})</a>{% endif %}
+      </li>
+      {% endfor %}
     </ul>
   </div>
   <div style="display:grid;gap:1rem;align-content:start">
+    {% if attention_items %}
+    <div class="card">
+      <h2>Needs attention <small><a href="{% url 'inventory:list' %}?status=soon">See all</a></small></h2>
+      <ul class="list">
+        {% for i in attention_items %}
+        <li><span class="em">{{ i.category.icon }}</span><div><b>{{ i.name }}</b><span>{{ i.quantity_label }} &middot; {{ i.expiry_date|date:"M j, Y" }}</span></div><span class="badge {{ i.status }}">{{ i.status_label }}</span></li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
     <div class="card">
       <h2>Get started</h2>
       <ol class="steps">
-        <li><div><b>Complete your profile</b><br><span class="muted">Add your barangay and household size.</span></div></li>
-        <li><div><b>Log your kit items</b><br><span class="muted">Coming in the Inventory module.</span></div></li>
-        <li><div><b>Turn on reminders</b><br><span class="muted">We'll warn you before things expire.</span></div></li>
+        <li><div><b><a href="{% url 'accounts:profile_edit' %}">Complete your profile</a></b><br><span class="muted">Add your barangay and household size.</span></div></li>
+        <li><div><b><a href="{% url 'inventory:add' %}">Log your kit items</a></b><br><span class="muted">Add each item with its quantity and expiry date.</span></div></li>
+        <li><div><b>Turn on reminders</b><br><span class="muted">Coming soon: we'll warn you before things expire.</span></div></li>
       </ol>
     </div>
     <div class="tip"><b>Typhoon season check</b><p style="margin:.3rem 0 0">Review your kit before June, and again before any signal no. 1 warning. Replace anything expiring within a month.</p>
