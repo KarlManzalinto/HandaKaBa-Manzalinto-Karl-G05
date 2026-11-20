@@ -619,7 +619,8 @@ tr:hover td {
 }
 
 .field input,
-.field select {
+.field select,
+.field textarea {
   width: 100%;
   padding: .62rem .75rem;
   border: 1.5px solid var(--line);
@@ -629,7 +630,9 @@ tr:hover td {
   font-family: inherit;
 }
 
-.field input:focus {
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
   outline: 3px solid #ffe29a;
   border-color: var(--sig-d);
 }
@@ -748,6 +751,137 @@ tr:hover td {
   outline-offset: 2px;
 }
 
+.field textarea {
+  resize: vertical;
+  min-height: 5rem;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.head .grow {
+  flex: 1;
+}
+
+.head h1 {
+  font-size: 1.6rem;
+}
+
+.head p {
+  margin: .25rem 0 0;
+  color: var(--mute);
+}
+
+.narrow {
+  max-width: 720px;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  margin-bottom: 1rem;
+}
+
+.filters input,
+.filters select {
+  padding: .55rem .7rem;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  font-size: .95rem;
+  background: #fbfdfe;
+  font-family: inherit;
+}
+
+.filters input {
+  flex: 1;
+  min-width: 180px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+td.actions {
+  white-space: nowrap;
+  text-align: right;
+}
+
+.btn.sm {
+  padding: .3rem .75rem;
+  font-size: .85rem;
+}
+
+.btn.danger {
+  background: var(--err);
+  color: #fff;
+}
+
+.btn.danger:hover {
+  background: #a82020;
+}
+
+.badge.ok {
+  background: #d8f0e2;
+  color: #1b6b3c;
+}
+
+.badge.soon {
+  background: #ffe1d1;
+  color: #9a3d06;
+}
+
+.badge.expired {
+  background: #fdecec;
+  color: var(--err);
+}
+
+.badge.none {
+  background: #e9f0f4;
+  color: var(--mute);
+}
+
+.list .badge {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.list .tag.ok {
+  background: #d8f0e2;
+  color: #1b6b3c;
+}
+
+.list a.tag {
+  text-decoration: none;
+  color: var(--navy);
+  background: #fff1c9;
+}
+
+.empty {
+  text-align: center;
+  padding: 2.2rem 1rem;
+}
+
+.empty .big {
+  font-size: 2.4rem;
+}
+
+.empty p {
+  margin: .3rem 0 1rem;
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
 @media(max-width:1000px) {
   .g4 {
     grid-template-columns: 1fr 1fr;
@@ -811,5 +945,17 @@ tr:hover td {
 
   .fg {
     grid-template-columns: 1fr;
+  }
+}
+
+@media(max-width:760px) {
+  .head {
+    flex-wrap: wrap;
+  }
+
+  .filters input,
+  .filters select,
+  .filters .btn {
+    flex: 1 1 100%;
   }
 }
