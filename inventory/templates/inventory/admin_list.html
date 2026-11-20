@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}All inventory | Handa Ka Ba{% endblock %}
+{% block content %}
+<div class="head">
+  <div class="grow"><h1>All household inventory</h1><p>Items logged by every household. Administrators can review and remove records.</p></div>
+</div>
+<div class="card">
+  {% url 'inventory:admin_list' as clear_url %}
+  {% include "inventory/_filters.html" with search_placeholder="Search item, household or barangay" clear_url=clear_url %}
+  {% if page_obj.object_list %}
+  <div class="table-wrap">
+    <table>
+      <tr><th>Household</th><th>Item</th><th>Category</th><th>Quantity</th><th>Expiry</th><th></th></tr>
+      {% for item in page_obj %}
+      <tr>
+        <td><b>{{ item.owner.get_full_name|default:item.owner.username }}</b><br><span class="muted">{{ item.owner.profile.barangay|default:"-" }}</span></td>
+        <td><a href="{% url 'inventory:detail' item.pk %}"><b>{{ item.name }}</b></a></td>
+        <td>{{ item.category.icon }} {{ item.category.name }}</td>
+        <td>{{ item.quantity_label }}</td>
+        <td>{% if item.expiry_date %}{{ item.expiry_date|date:"M j, Y" }}<br>{% endif %}<span class="badge {{ item.status }}">{{ item.status_label }}</span></td>
+        <td class="actions">
+          <a class="btn alt sm" href="{% url 'inventory:detail' item.pk %}">View</a>
+          <a class="btn danger sm" href="{% url 'inventory:delete' item.pk %}">Delete</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% include "inventory/_pager.html" %}
+  {% elif has_filters %}
+  <div class="empty"><div class="big">&#128269;</div><b>No items match your filters</b><p class="muted">Try a different search or clear the filters.</p></div>
+  {% else %}
+  <div class="empty"><div class="big">&#128230;</div><b>No items logged yet</b><p class="muted">Items will appear here once households start filling their go-bags.</p></div>
+  {% endif %}
+</div>
+{% endblock %}

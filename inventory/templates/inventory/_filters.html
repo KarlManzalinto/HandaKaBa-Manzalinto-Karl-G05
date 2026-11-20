@@ -1,0 +1,15 @@
+<form method="get" class="filters">
+  <input type="search" name="q" value="{{ filters.q }}" placeholder="{{ search_placeholder }}" aria-label="Search">
+  <select name="category" aria-label="Category">
+    <option value="">All categories</option>
+    {% for c in categories %}<option value="{{ c.pk }}" {% if filters.category == c.pk|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+  </select>
+  <select name="status" aria-label="Expiry status">
+    <option value="">Any expiry status</option>
+    <option value="expired" {% if filters.status == "expired" %}selected{% endif %}>Expired</option>
+    <option value="soon" {% if filters.status == "soon" %}selected{% endif %}>Expiring in 30 days</option>
+    <option value="ok" {% if filters.status == "ok" %}selected{% endif %}>Good</option>
+  </select>
+  <button class="btn" type="submit">Filter</button>
+  {% if has_filters %}<a class="btn alt" href="{{ clear_url }}">Clear</a>{% endif %}
+</form>

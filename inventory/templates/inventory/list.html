@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}My inventory | Handa Ka Ba{% endblock %}
+{% block content %}
+<div class="head">
+  <div class="grow"><h1>My inventory</h1><p>Everything in your go-bag, with expiry dates.</p></div>
+  <a class="btn" href="{% url 'inventory:add' %}">+ Add item</a>
+</div>
+<div class="card">
+  {% url 'inventory:list' as clear_url %}
+  {% include "inventory/_filters.html" with search_placeholder="Search your items" clear_url=clear_url %}
+  {% if page_obj.object_list %}
+  <div class="table-wrap">
+    <table>
+      <tr><th>Item</th><th>Category</th><th>Quantity</th><th>Expiry</th><th></th></tr>
+      {% for item in page_obj %}
+      <tr>
+        <td><a href="{% url 'inventory:detail' item.pk %}"><b>{{ item.name }}</b></a>{% if item.notes %}<br><span class="muted">{{ item.notes|truncatechars:60 }}</span>{% endif %}</td>
+        <td>{{ item.category.icon }} {{ item.category.name }}</td>
+        <td>{{ item.quantity_label }}</td>
+        <td>{% if item.expiry_date %}{{ item.expiry_date|date:"M j, Y" }}<br>{% endif %}<span class="badge {{ item.status }}">{{ item.status_label }}</span></td>
+        <td class="actions">
+          <a class="btn alt sm" href="{% url 'inventory:edit' item.pk %}">Edit</a>
+          <a class="btn danger sm" href="{% url 'inventory:delete' item.pk %}">Delete</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% include "inventory/_pager.html" %}
+  {% elif has_filters %}
+  <div class="empty"><div class="big">&#128269;</div><b>No items match your filters</b><p class="muted">Try a different search or clear the filters.</p></div>
+  {% else %}
+  <div class="empty"><div class="big">&#127890;</div><b>Your go-bag is empty</b><p class="muted">Add water, food, medicine and other essentials to start tracking expiry dates.</p><a class="btn" href="{% url 'inventory:add' %}">Add your first item</a></div>
+  {% endif %}
+</div>
+{% endblock %}

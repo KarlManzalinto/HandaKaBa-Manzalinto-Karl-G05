@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Delete item | Handa Ka Ba{% endblock %}
+{% block content %}
+<div class="head"><div class="grow"><h1>Delete this item?</h1></div></div>
+<div class="card narrow">
+  <p><b>{{ item.name }}</b> ({{ item.quantity_label }}, {{ item.category.name }}){% if is_admin %} belongs to <b>{{ item.owner.get_full_name|default:item.owner.username }}</b>.{% endif %}</p>
+  <p class="muted">This removes it from the go-bag inventory. You can't undo this.</p>
+  <form method="post" class="mt">{% csrf_token %}
+    <button class="btn danger" type="submit">Yes, delete item</button>
+    <a class="btn alt" href="{% url back_url %}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

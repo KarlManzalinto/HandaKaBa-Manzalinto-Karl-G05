@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ item.name }} | Handa Ka Ba{% endblock %}
+{% block content %}
+<div class="head">
+  <div class="grow"><h1>{{ item.name }}</h1><p>{{ item.category.icon }} {{ item.category.name }}</p></div>
+  <a class="btn alt" href="{% url back_url %}">Back to list</a>
+</div>
+<div class="card narrow">
+  <dl class="kv">
+    {% if is_admin %}
+    <dt>Household</dt><dd>{{ item.owner.get_full_name|default:item.owner.username }} <span class="muted">@{{ item.owner.username }}</span></dd>
+    <dt>Barangay</dt><dd>{{ item.owner.profile.barangay|default:"-" }}</dd>
+    {% endif %}
+    <dt>Quantity</dt><dd>{{ item.quantity_label }}</dd>
+    <dt>Expiry date</dt><dd>{% if item.expiry_date %}{{ item.expiry_date|date:"F j, Y" }}{% else %}Does not expire{% endif %} <span class="badge {{ item.status }}">{{ item.status_label }}</span></dd>
+    <dt>Notes</dt><dd>{{ item.notes|default:"-" }}</dd>
+    <dt>Added</dt><dd>{{ item.created_at|date:"F j, Y" }}</dd>
+    <dt>Last updated</dt><dd>{{ item.updated_at|date:"F j, Y, g:i A" }}</dd>
+  </dl>
+  <p class="mt">
+    {% if item.owner_id == user.pk %}<a class="btn" href="{% url 'inventory:edit' item.pk %}">Edit item</a>{% endif %}
+    <a class="btn danger" href="{% url 'inventory:delete' item.pk %}">Delete item</a>
+  </p>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} | Handa Ka Ba{% endblock %}
+{% block content %}
+<div class="head">
+  <div class="grow"><h1>{{ title }}</h1><p>{{ intro }}</p></div>
+</div>
+<div class="card narrow">
+  <form method="post" novalidate>{% csrf_token %}
+    <div class="fg">{% include "_form.html" with grid=True full_fields="name,notes" %}</div>
+    <p class="mt">
+      <button class="btn" type="submit">{{ submit }}</button>
+      {% if item %}<a class="btn alt" href="{% url 'inventory:detail' item.pk %}">Cancel</a>{% else %}<a class="btn alt" href="{% url 'inventory:list' %}">Cancel</a>{% endif %}
+    </p>
+  </form>
+</div>
+{% endblock %}
