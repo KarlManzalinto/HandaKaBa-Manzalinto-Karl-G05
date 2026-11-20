@@ -1,19 +1,28 @@
 {% extends "base.html" %}
-{% block title %}Admin Dashboard | Handa Ka Ba{% endblock %}
+{% block title %}Admin dashboard | Handa Ka Ba{% endblock %}
 {% block content %}
-<div class="card"><h1>Admin Dashboard</h1><p class="muted">Overview of registered users.</p></div>
-<div class="grid">
-  <div class="card"><div class="muted">Total users</div><div class="stat">{{ total_users }}</div></div>
-  <div class="card"><div class="muted">Households</div><div class="stat">{{ household_count }}</div></div>
-  <div class="card"><div class="muted">Administrators</div><div class="stat">{{ admin_count }}</div></div>
+<section class="hero">
+  <div class="grow"><h1>Admin dashboard</h1><p>See who has joined Handa Ka Ba and how households are signing up.</p>
+  <a class="btn" href="{% url 'admin:index' %}">Manage users</a></div>
+  <div class="ring" style="--p:{{ household_pct }}"><div>{{ household_pct }}%<small>households</small></div></div>
+</section>
+<div class="grid g4 mt">
+  <div class="card stat"><div class="ic i4">&#128101;</div><div><b>{{ total_users }}</b><span>Total users</span></div></div>
+  <div class="card stat"><div class="ic i2">&#127968;</div><div><b>{{ household_count }}</b><span>Households</span></div></div>
+  <div class="card stat"><div class="ic i1">&#128737;</div><div><b>{{ admin_count }}</b><span>Administrators</span></div></div>
+  <div class="card stat"><div class="ic i3">&#10024;</div><div><b>{{ new_week }}</b><span>Joined this week</span></div></div>
 </div>
-<div class="card">
-  <h2>Recent registrations</h2>
-  <table>
-    <tr><th>Username</th><th>Name</th><th>Role</th><th>Barangay</th><th>Joined</th></tr>
-    {% for u in recent_users %}
-    <tr><td>{{ u.username }}</td><td>{{ u.get_full_name|default:"—" }}</td><td>{{ u.profile.get_role_display }}</td><td>{{ u.profile.barangay|default:"—" }}</td><td>{{ u.date_joined|date:"M j, Y" }}</td></tr>
-    {% endfor %}
-  </table>
+<div class="grid g2 mt">
+  <div class="card"><h2>Recent registrations <small>latest 10</small></h2>
+    <table><tr><th>User</th><th>Role</th><th>Barangay</th><th>Size</th><th>Joined</th></tr>
+    {% for u in recent_users %}<tr>
+      <td><b>{{ u.get_full_name|default:u.username }}</b><br><span class="muted">{{ u.email|default:u.username }}</span></td>
+      <td><span class="badge {% if u.profile.role == 'admin' %}a{% endif %}">{{ u.profile.get_role_display }}</span></td>
+      <td>{{ u.profile.barangay|default:"-" }}</td><td>{{ u.profile.household_size }}</td><td>{{ u.date_joined|date:"M j" }}</td></tr>{% endfor %}
+    </table></div>
+  <div class="card" style="align-self:start"><h2>Role split</h2>
+    <p style="margin:.2rem 0"><b>Households</b> <span class="muted">{{ household_count }}</span></p><div class="bar"><i style="width:{{ household_pct }}%"></i></div>
+    <p style="margin:1rem 0 .2rem"><b>Administrators</b> <span class="muted">{{ admin_count }}</span></p><div class="bar"><i style="width:{{ admin_pct }}%"></i></div>
+    <p class="muted" style="margin-top:1rem">New accounts are households by default. Create admins with <code>createsuperuser</code>.</p></div>
 </div>
 {% endblock %}
