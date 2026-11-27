@@ -34,4 +34,15 @@
 {% block content %}{% endblock %}
 {% if user.is_authenticated %}</div></div>{% endif %}
 {% endwith %}
+<script>
+document.addEventListener("submit", function (event) {
+  var form = event.target;
+  if (!form.method || form.method.toLowerCase() !== "post") { return; }
+  var button = event.submitter || form.querySelector("button[type=submit]");
+  if (button) { setTimeout(function () { button.disabled = true; }, 0); }
+});
+window.addEventListener("pageshow", function (event) {
+  if (event.persisted) { window.location.reload(); }
+});
+</script>
 </body></html>
