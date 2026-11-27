@@ -3,6 +3,8 @@ from django.utils import timezone
 
 from .models import Category, InventoryItem
 
+DUPLICATE_MESSAGE = "You already have this item in that category. Edit it to change the quantity."
+
 
 class InventoryItemForm(forms.ModelForm):
     class Meta:
@@ -30,6 +32,9 @@ class InventoryItemForm(forms.ModelForm):
             raise forms.ValidationError("Item name must be at least 2 characters.")
         return name
 
+    def clean_notes(self):
+        return " ".join(self.cleaned_data["notes"].split())
+
     def clean_expiry_date(self):
         expiry = self.cleaned_data.get("expiry_date")
         if expiry and expiry < timezone.localdate():
@@ -46,5 +51,5 @@ class InventoryItemForm(forms.ModelForm):
             if self.instance.pk:
                 duplicates = duplicates.exclude(pk=self.instance.pk)
             if duplicates.exists():
-                self.add_error("name", "You already have this item in that category. Edit it to change the quantity.")
+                self.add_error("name", DUPLICATE_MESSAGE)
         return cleaned
