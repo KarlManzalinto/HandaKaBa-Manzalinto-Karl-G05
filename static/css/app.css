@@ -882,6 +882,37 @@ td.actions {
   margin-top: 1rem;
 }
 
+.errorpage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.errorbox {
+  max-width: 460px;
+  text-align: center;
+  padding: 2.4rem 2rem;
+}
+
+.errorbox .code {
+  font-size: 3.2rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--sig-d);
+  margin-bottom: .6rem;
+}
+
+.errorbox h1 {
+  font-size: 1.4rem;
+  margin-bottom: .6rem;
+}
+
+.errorbox p {
+  margin: 0 0 1.4rem;
+}
+
 @media(max-width:1000px) {
   .g4 {
     grid-template-columns: 1fr 1fr;

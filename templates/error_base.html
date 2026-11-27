@@ -1,0 +1,15 @@
+{% load static %}<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Something went wrong{% endblock %} | Handa Ka Ba</title>
+<link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head><body>
+<main class="errorpage">
+  <div class="card errorbox">
+    <div class="code">{% block code %}{% endblock %}</div>
+    <h1>{% block heading %}{% endblock %}</h1>
+    <p class="muted">{% block message %}{% endblock %}</p>
+    <a class="btn" href="{% url 'accounts:home' %}">Back to Handa Ka Ba</a>
+  </div>
+</main>
+</body></html>
