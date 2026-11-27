@@ -3,7 +3,7 @@
 <div class="field {% if field.name in full_fields or not grid %}full{% endif %}">
   <label for="{{ field.id_for_label }}">{{ field.label }}</label>
   {{ field }}
-  {% if field.help_text %}<div class="help">{{ field.help_text|safe }}</div>{% endif %}
+  {% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}
   {% for e in field.errors %}<div class="err">{{ e }}</div>{% endfor %}
 </div>
 {% endfor %}

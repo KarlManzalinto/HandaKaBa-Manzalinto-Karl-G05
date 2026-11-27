@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.contrib.auth.models import User
+from django.db import IntegrityError, transaction
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -215,3 +216,46 @@ class StatusAndDashboardTests(InventoryTestBase):
         self.item(self.ana)
         self.ana.delete()
         self.assertEqual(InventoryItem.objects.count(), 0)
+
+
+class DataIntegrityTests(InventoryTestBase):
+    def test_database_rejects_duplicate_item_even_if_form_is_bypassed(self):
+        self.item(name="Canned tuna")
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            self.item(name="CANNED TUNA")
+
+    def test_database_rejects_zero_or_huge_quantity(self):
+        for quantity in (0, 10000):
+            with self.assertRaises(IntegrityError), transaction.atomic():
+                self.item(name=f"Bad {quantity}", quantity=quantity)
+
+    def test_category_in_use_cannot_be_deleted(self):
+        from django.db.models import ProtectedError
+        self.item()
+        with self.assertRaises(ProtectedError):
+            self.water.delete()
+
+    def test_double_submit_creates_only_one_record(self):
+        self.login(self.ana)
+        for _ in range(2):
+            self.client.post(reverse("inventory:add"), self.payload())
+        self.assertEqual(InventoryItem.objects.filter(owner=self.ana, name="Canned tuna").count(), 1)
+
+    def test_successful_post_redirects_so_refresh_does_not_resubmit(self):
+        self.login(self.ana)
+        response = self.client.post(reverse("inventory:add"), self.payload())
+        self.assertEqual(response.status_code, 302)
+
+    def test_http_methods_are_restricted(self):
+        item = self.item()
+        self.login(self.ana)
+        self.assertEqual(self.client.put(reverse("inventory:delete", args=[item.pk])).status_code, 405)
+        self.assertEqual(self.client.post(reverse("inventory:list")).status_code, 405)
+        self.assertEqual(self.client.post(reverse("inventory:detail", args=[item.pk])).status_code, 405)
+        self.assertTrue(InventoryItem.objects.filter(pk=item.pk).exists())
+
+    def test_whitespace_is_cleaned_from_text_fields(self):
+        self.login(self.ana)
+        self.client.post(reverse("inventory:add"), self.payload(name="  Canned    tuna  ", notes="  keep   dry "))
+        item = InventoryItem.objects.get()
+        self.assertEqual((item.name, item.notes), ("Canned tuna", "keep dry"))
