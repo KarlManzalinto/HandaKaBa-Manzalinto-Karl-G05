@@ -1,9 +1,10 @@
 from datetime import timedelta
 
 from django.conf import settings
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MaxValueValidator, MinLengthValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q
+from django.db.models.functions import Lower
 from django.utils import timezone
 
 EXPIRY_WARNING_DAYS = 30
@@ -66,7 +67,7 @@ class InventoryItem(models.Model):
 
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="inventory_items")
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="items")
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, validators=[MinLengthValidator(2)])
     quantity = models.PositiveIntegerField(
         default=1,
         validators=[MinValueValidator(1), MaxValueValidator(9999)],
@@ -81,6 +82,17 @@ class InventoryItem(models.Model):
 
     class Meta:
         ordering = [models.F("expiry_date").asc(nulls_last=True), "name"]
+        constraints = [
+            models.UniqueConstraint(
+                Lower("name"), "owner", "category",
+                name="inventory_unique_item_per_owner_category",
+                violation_error_message="You already have this item in that category. Edit it to change the quantity.",
+            ),
+            models.CheckConstraint(
+                condition=Q(quantity__gte=1, quantity__lte=9999),
+                name="inventory_quantity_between_1_and_9999",
+            ),
+        ]
 
     def __str__(self):
         return f"{self.name} x{self.quantity} ({self.owner})"
